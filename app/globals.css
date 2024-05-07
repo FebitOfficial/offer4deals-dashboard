@@ -77,3 +77,40 @@
 .label {
   @apply text-sm font-semibold text-gray-600;
 }
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 45px;
+  aspect-ratio: 0.75;
+  border-radius: 50px;
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  border-radius: 50px;
+  --c: no-repeat linear-gradient(#000 0 0);
+  background: var(--c) 0% 50%, var(--c) 50% 50%, var(--c) 100% 50%;
+  animation: l7 1s infinite linear alternate;
+}
+@keyframes l7 {
+  0% {
+    background-size: 20% 50%, 20% 50%, 20% 50%;
+    border-radius: 10px;
+  }
+  20% {
+    border-radius: 10px;
+    background-size: 20% 20%, 20% 50%, 20% 50%;
+  }
+  40% {
+    border-radius: 10px;
+    background-size: 20% 100%, 20% 20%, 20% 50%;
+  }
+  60% {
+    border-radius: 10px;
+    background-size: 20% 50%, 20% 100%, 20% 20%;
+  }
+  80% {
+    background-size: 20% 50%, 20% 50%, 20% 100%;
+  }
+  100% {
+    border-radius: 10px;
+    background-size: 20% 50%, 20% 50%, 20% 50%;
+  }
+}

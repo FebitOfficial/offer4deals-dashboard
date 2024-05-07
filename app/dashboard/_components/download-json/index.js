@@ -50,4 +50,8 @@ export const categories = [
     id: 7,
     name: "Clothing",
   },
+  {
+    id: 8,
+    name: "Skin Care",
+  },
 ];

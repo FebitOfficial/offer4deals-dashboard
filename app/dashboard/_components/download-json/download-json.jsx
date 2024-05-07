@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import CustomInput from "@/components/custom/custom-input";
+import { insertProduct } from "@/firebaseConfig/firebase";
 import {
   Select,
   SelectContent,
@@ -10,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { categories, sites } from "./index";
+import { toast } from "sonner";
 
 const initialFromData = {
   name: "",
@@ -35,34 +37,21 @@ const DownloadJson = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const clearForm = () => {
+    setFormData(initialFromData);
+    setDealOfTheDay(false);
+    setSite(sites[0].name.toLowerCase());
+    setCategory(categories[0].name);
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (jsonData.some((item) => item.Category === category)) {
-      if (
-        jsonData.some((item) =>
-          item.Products.some(
-            (product) =>
-              JSON.stringify({ ...product }) ==
-              JSON.stringify({ ...formData, deal_of_the_day, site })
-          )
-        )
-      ) {
-        return;
-      }
-      jsonData.map((item) => {
-        if (item.Category === category) {
-          item.Products.push({ ...formData, deal_of_the_day, site });
-        }
-      });
-    } else {
-      jsonData.push({
-        Category: category,
-        Products: [{ ...formData, deal_of_the_day, site }],
-      });
-    }
-    setJsonData([...jsonData]);
-    console.log(jsonData, "jsonData");
+    insertProduct({
+      Category: category,
+      Products: [{ ...formData, deal_of_the_day, site }],
+    }).then((res) => {
+      toast.success("Product Added Successfully");
+      clearForm();
+    });
   };
 
   console.log(jsonData, "jsonData");
@@ -82,6 +71,7 @@ const DownloadJson = () => {
     // Clean up by revoking the Object URL and removing the link
     URL.revokeObjectURL(url);
     link.remove();
+    setJsonData([]);
   };
   console.log(site);
 
@@ -94,6 +84,7 @@ const DownloadJson = () => {
       >
         <div className="w-[50%] flex flex-col gap-2">
           <CustomInput
+            value={formData.name}
             required
             name="name"
             onChange={handleFormFieldChange}
@@ -102,6 +93,7 @@ const DownloadJson = () => {
             placeholder="Product Name"
           />
           <CustomInput
+            value={formData.description}
             required
             name="description"
             onChange={handleFormFieldChange}
@@ -110,6 +102,7 @@ const DownloadJson = () => {
             placeholder="Description"
           />
           <CustomInput
+            value={formData.image_url}
             required
             name="image_url"
             onChange={handleFormFieldChange}
@@ -119,6 +112,7 @@ const DownloadJson = () => {
           />
           <CustomInput
             required
+            value={formData.link}
             name="link"
             onChange={handleFormFieldChange}
             className={"w-full"}
@@ -126,6 +120,7 @@ const DownloadJson = () => {
             placeholder="Link"
           />
           <CustomInput
+            value={formData.price}
             required
             type="number"
             name="price"
@@ -135,6 +130,7 @@ const DownloadJson = () => {
             placeholder="Original Price Without Discount"
           />
           <CustomInput
+            value={formData.discount}
             required
             type="number"
             name="discount"
@@ -166,6 +162,7 @@ const DownloadJson = () => {
             </Select>
           </div>
           <CustomInput
+            value={formData.total_items}
             required
             name="total_items"
             onChange={handleFormFieldChange}
@@ -174,6 +171,7 @@ const DownloadJson = () => {
             placeholder="Total Items"
           />
           <CustomInput
+            value={formData.total_sold}
             required
             name="total_sold"
             onChange={handleFormFieldChange}
