@@ -90,6 +90,68 @@ export const insertProduct = (product) => {
   });
 };
 
+export const updateProduct = (product) => {
+  const productRef = ref(db, "products");
+  return new Promise((resolve, reject) => {
+    onValue(
+      productRef,
+      (snapshot) => {
+        const data = snapshot.val() || [];
+        const categoryIndex = data.findIndex(
+          (item) => item.Category === product.Category
+        );
+        if (categoryIndex !== -1) {
+          const productIndex = data[categoryIndex].Products.findIndex(
+            (item) => item.id === product.Products[0].id
+          );
+          if (productIndex !== -1) {
+            data[categoryIndex].Products[productIndex] = product.Products[0];
+          }
+        }
+        set(ref(db, "products"), data);
+        resolve(data);
+      },
+      {
+        onlyOnce: true, // Ensures the listener is triggered only once
+      },
+      (error) => {
+        reject(error);
+      }
+    );
+  });
+};
+
+export const deleteProduct = (product) => {
+  const productRef = ref(db, "products");
+  return new Promise((resolve, reject) => {
+    onValue(
+      productRef,
+      (snapshot) => {
+        const data = snapshot.val() || [];
+        const categoryIndex = data.findIndex(
+          (item) => item.Category === product.category.name
+        );
+        if (categoryIndex !== -1) {
+          const productIndex = data[categoryIndex].Products.findIndex(
+            (item) => item.id === product.id
+          );
+          if (productIndex !== -1) {
+            data[categoryIndex].Products.splice(productIndex, 1);
+          }
+        }
+        set(ref(db, "products"), data);
+        resolve(data);
+      },
+      {
+        onlyOnce: true, // Ensures the listener is triggered only once
+      },
+      (error) => {
+        reject(error);
+      }
+    );
+  });
+};
+
 export const getImages = () => {
   const imagesRef = ref(db, "images");
   return new Promise((resolve, reject) => {
