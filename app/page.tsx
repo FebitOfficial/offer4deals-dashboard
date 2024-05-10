@@ -4,8 +4,15 @@ import { useEffect, useState } from "react";
 import { getProducts, deleteProduct } from "@/firebaseConfig/firebase";
 import DeleteConfirmationModal from "@/components/modals/delete-confirmation-modal";
 import useDeleteConfirmationModal from "@/hooks/modals/useDeleteConfirmationModal";
+import EditModal from "@/components/modals/edit-modal";
+import useEditModal from "@/hooks/modals/useEditProductModal";
 export default function Dashboard() {
   const { isOpen, onOpen, onClose } = useDeleteConfirmationModal();
+  const {
+    isOpen: editModalIsOpen,
+    onOpen: editModalOnOpen,
+    onClose: editModalOnClose,
+  } = useEditModal();
   const [currentProduct, setCurrentProduct] = useState(null);
   const [products, setProducts] = useState([]);
   useEffect(() => {
@@ -13,6 +20,7 @@ export default function Dashboard() {
       setProducts(data);
     });
   }, []);
+
   return (
     <div className="overflow-x-auto w-[90%] mx-auto py-5">
       <h1 className="py-4 text-2xl font-semibold text-gray-700 text-center">
@@ -54,7 +62,14 @@ export default function Dashboard() {
                   {product.discount}
                 </td>
                 <td className="px-4 py-3 flex items-center space-x-2 text-gray-500 dark:text-gray-400">
-                  <Button size="icon" variant="ghost">
+                  <Button
+                    onClick={() => {
+                      setCurrentProduct(product);
+                      editModalOnOpen();
+                    }}
+                    size="icon"
+                    variant="ghost"
+                  >
                     <DeleteIcon className="h-5 w-5" />
                     <span className="sr-only">Edit</span>
                   </Button>
@@ -75,9 +90,26 @@ export default function Dashboard() {
           </tbody>
         </table>
       )}
-      <DeleteConfirmationModal
-        handleSubmit={() => deleteProduct(currentProduct).then(() => onClose())}
-      />
+      {currentProduct && (
+        <DeleteConfirmationModal
+          product={currentProduct}
+          handleSubmit={() =>
+            deleteProduct(currentProduct).then(async () => {
+              const res = await getProducts();
+              setProducts(res);
+              onClose();
+              setCurrentProduct(null);
+            })
+          }
+        />
+      )}
+      {currentProduct && (
+        <EditModal
+          setProducts={setProducts}
+          currentProduct={currentProduct}
+          type="edit"
+        />
+      )}
     </div>
   );
 }

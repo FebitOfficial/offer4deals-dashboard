@@ -38,7 +38,7 @@ export const getProducts = () => {
         resolve(
           data
             .map((item) =>
-              item.Products.map((product) => {
+              item.Products?.map((product) => {
                 return {
                   ...product,
                   category: {
@@ -47,6 +47,7 @@ export const getProducts = () => {
                 };
               })
             )
+            .filter((item) => item !== undefined)
             .flat(Infinity)
         );
       },
@@ -75,7 +76,6 @@ export const insertProduct = (product) => {
             Products: [product.Products[0]],
           });
         }
-        console.log(data);
 
         set(ref(db, "products"), data);
         resolve(data);
@@ -106,6 +106,12 @@ export const updateProduct = (product) => {
           );
           if (productIndex !== -1) {
             data[categoryIndex].Products[productIndex] = product.Products[0];
+          } else {
+            data[categoryIndex].Products.push(product.Products[0]);
+            deleteProduct({
+              ...product.Products[0],
+              category: { name: product.Category },
+            });
           }
         }
         set(ref(db, "products"), data);
@@ -131,6 +137,7 @@ export const deleteProduct = (product) => {
         const categoryIndex = data.findIndex(
           (item) => item.Category === product.category.name
         );
+
         if (categoryIndex !== -1) {
           const productIndex = data[categoryIndex].Products.findIndex(
             (item) => item.id === product.id
@@ -160,6 +167,28 @@ export const getImages = () => {
       (snapshot) => {
         const data = snapshot.val();
         resolve(data);
+      },
+      (error) => {
+        reject(error);
+      }
+    );
+  });
+};
+
+export const getCategoriesAndSites = () => {
+  const productsRef = ref(db, "products");
+
+  return new Promise((resolve, reject) => {
+    onValue(
+      productsRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        const categories = data.map((item) => item.Category);
+        let sites = data.map((item) =>
+          item.Products.map((product) => product.site)
+        );
+        sites = [...new Set(sites.flat(Infinity))];
+        resolve({ categories, sites });
       },
       (error) => {
         reject(error);

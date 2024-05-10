@@ -1,8 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import CustomInput from "@/components/custom/custom-input";
-import { insertProduct } from "@/firebaseConfig/firebase";
+import {
+  getCategoriesAndSites,
+  getProducts,
+  insertProduct,
+  updateProduct,
+} from "@/firebaseConfig/firebase";
 import {
   Select,
   SelectContent,
@@ -10,8 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categories, sites } from "./index";
+import { sites } from "./index";
 import { toast } from "sonner";
+import useEditModal from "@/hooks/modals/useEditProductModal";
 
 const initialFromData = {
   name: "",
@@ -23,12 +29,14 @@ const initialFromData = {
   total_items: null,
   total_sold: null,
 };
-const DownloadJson = () => {
+const DownloadJson = ({ type, currentProduct, setProducts }) => {
+  const { isOpen, onOpen, onClose } = useEditModal();
+  const [categories, setCategories] = useState(null);
   const [formData, setFormData] = useState(initialFromData);
   const [deal_of_the_day, setDealOfTheDay] = useState(false);
 
-  const [site, setSite] = useState(sites[0].name.toLowerCase());
-  const [category, setCategory] = useState(categories[0].name);
+  const [site, setSite] = useState("amazon");
+  const [category, setCategory] = useState("Electronics");
   const [jsonData, setJsonData] = useState([]);
 
   const handleFormFieldChange = (e) => {
@@ -40,21 +48,47 @@ const DownloadJson = () => {
   const clearForm = () => {
     setFormData(initialFromData);
     setDealOfTheDay(false);
-    setSite(sites[0].name.toLowerCase());
-    setCategory(categories[0].name);
+    setSite("amazon");
+    setCategory("Electronics");
   };
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (type === "edit") {
+      updateProduct({
+        Category: category,
+        Products: [
+          {
+            ...formData,
+            deal_of_the_day,
+            site,
+            id: currentProduct.id,
+          },
+        ],
+      }).then((res) => {
+        toast.success("Product Updated Successfully");
+        getProducts().then((res) => {
+          setProducts(res);
+          onClose();
+          clearForm();
+        });
+      });
+      return;
+    }
     insertProduct({
       Category: category,
-      Products: [{ ...formData, deal_of_the_day, site }],
+      Products: [
+        {
+          ...formData,
+          deal_of_the_day,
+          site,
+          id: Date.now() + Date.now() * Math.random() * 10000 + "",
+        },
+      ],
     }).then((res) => {
       toast.success("Product Added Successfully");
       clearForm();
     });
   };
-
-  console.log(jsonData, "jsonData");
 
   const downloadJson = () => {
     // Convert the JSON data to a string
@@ -73,12 +107,25 @@ const DownloadJson = () => {
     link.remove();
     setJsonData([]);
   };
-  console.log(site);
 
-  console.log(formData);
+  useEffect(() => {
+    if (type === "edit") {
+      console.log("edit", currentProduct);
+      setFormData(currentProduct);
+      setDealOfTheDay(currentProduct.deal_of_the_day);
+      setSite(currentProduct.site);
+      setCategory(currentProduct.category.name);
+    }
+  }, [currentProduct, type]);
+  useEffect(() => {
+    getCategoriesAndSites().then((res) => {
+      setCategories(res.categories);
+    });
+  }, []);
   return (
     <div className="w-[100%] flex gap-6 mx-auto">
       <form
+        style={{ width: type === "edit" ? "95%" : "70%" }}
         onSubmit={handleSubmit}
         className="py-6 w-[70%] flex gap-6 px-6  mx-auto"
       >
@@ -190,9 +237,9 @@ const DownloadJson = () => {
                 <SelectValue placeholder="Product Site" />
               </SelectTrigger>
               <SelectContent>
-                {sites.map((site) => {
+                {sites?.map((site) => {
                   return (
-                    <SelectItem value={site.name.toLowerCase()} key={site.id}>
+                    <SelectItem value={site.name.toLowerCase()} key={site}>
                       {site.name}
                     </SelectItem>
                   );
@@ -204,17 +251,17 @@ const DownloadJson = () => {
             <p className="text-sm font-semibold text-gray-600">Category</p>
             <Select
               required
-              value={category}
+              value={currentProduct?.category?.name || category}
               onValueChange={(value) => setCategory(value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Product Category" />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((site) => {
+                {categories?.map((site) => {
                   return (
-                    <SelectItem value={site.name} key={site.id}>
-                      {site.name}
+                    <SelectItem value={site} key={site}>
+                      {site}
                     </SelectItem>
                   );
                 })}
