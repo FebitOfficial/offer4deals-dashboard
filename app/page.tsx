@@ -6,6 +6,9 @@ import DeleteConfirmationModal from "@/components/modals/delete-confirmation-mod
 import useDeleteConfirmationModal from "@/hooks/modals/useDeleteConfirmationModal";
 import EditModal from "@/components/modals/edit-modal";
 import useEditModal from "@/hooks/modals/useEditProductModal";
+import Link from "next/link";
+import { Icon } from "@iconify/react";
+import { UserButton } from "@clerk/nextjs";
 export default function Dashboard() {
   const { isOpen, onOpen, onClose } = useDeleteConfirmationModal();
   const {
@@ -23,9 +26,17 @@ export default function Dashboard() {
 
   return (
     <div className="overflow-x-auto w-[90%] mx-auto py-5">
-      <h1 className="py-4 text-2xl font-semibold text-gray-700 text-center">
-        Offers4Deals Dashboard
-      </h1>
+      <div className="flex justify-between items-center gap-4 mb-4">
+        <h1 className="py-4 text-2xl font-semibold text-gray-700">
+          Offers4Deals Dashboard
+        </h1>
+        <div className="flex gap-2 items-center">
+          <Link href={"/dashboard"}>
+            <Button variant={"ghost"}>Add Products</Button>
+          </Link>
+          <UserButton />
+        </div>
+      </div>
       {products.length > 0 && (
         <table className="w-full table-auto border-collapse text-left">
           <thead className="bg-gray-100 dark:bg-gray-800">
@@ -70,8 +81,7 @@ export default function Dashboard() {
                     size="icon"
                     variant="ghost"
                   >
-                    <DeleteIcon className="h-5 w-5" />
-                    <span className="sr-only">Edit</span>
+                    <Icon icon="bxs:edit" className="w-6 h-6" />
                   </Button>
                   <Button
                     onClick={() => {
