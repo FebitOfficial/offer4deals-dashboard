@@ -125,11 +125,10 @@ const DownloadJson = ({ type, currentProduct, setProducts }) => {
   return (
     <div className="w-[100%] flex gap-6 mx-auto">
       <form
-        style={{ width: type === "edit" ? "95%" : "70%" }}
         onSubmit={handleSubmit}
-        className="py-6 w-[70%] flex gap-6 px-6  mx-auto"
+        className="py-6 w-[95%] md:w-[95%] flex-col md:flex-row flex gap-6 px-6  mx-auto"
       >
-        <div className="w-[50%] flex flex-col gap-2">
+        <div className="w-[100%] md:w-[50%] flex flex-col gap-2">
           <CustomInput
             value={formData.name}
             required
@@ -187,7 +186,7 @@ const DownloadJson = ({ type, currentProduct, setProducts }) => {
             placeholder="Discount (In Percentage)"
           />
         </div>
-        <div className="flex w-[50%] flex-col gap-2">
+        <div className="flex w-[100%] md:w-[50%]  flex-col gap-2">
           <div className="flex flex-col gap-1">
             <p className="text-sm font-semibold text-gray-600">
               Deal of the day

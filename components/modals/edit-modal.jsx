@@ -11,7 +11,7 @@ const EditModal = ({ type, currentProduct, setProducts }) => {
       isOpen={isOpen}
       onClose={onClose}
     >
-      <div className="w-[900px]">
+      <div className="md:w-[900px] w-screen h-[100vh] md:h-fit overscroll-auto">
         <DownloadJson
           type={type}
           currentProduct={currentProduct}

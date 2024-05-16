@@ -16,12 +16,10 @@ const Modal = ({
         {children}
         {!!showIcon === true && (
           <div
-            style={{
-              top: showIconTop || "0px",
-              right: showIconRight || "-25px",
-            }}
             onClick={onClose}
-            className="absolute cursor-pointer transition-all duration-300 ease-in hover:bg-slate-100 p-[3px] rounded-full "
+            className={`absolute cursor-pointer top-[12px] right-[12px] 
+   
+            transition-all duration-300 ease-in hover:bg-slate-100 p-[3px] rounded-full `}
           >
             <Icon
               icon="system-uicons:cross"

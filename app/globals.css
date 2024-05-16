@@ -114,3 +114,6 @@
     background-size: 20% 50%, 20% 50%, 20% 50%;
   }
 }
+.button {
+  @apply hover:bg-gray-100 p-1 rounded-md w-fit;
+}

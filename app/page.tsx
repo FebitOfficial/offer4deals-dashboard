@@ -44,14 +44,14 @@ export default function Dashboard() {
               <th className="px-4 py-3 font-medium text-gray-700 dark:text-gray-300">
                 Name
               </th>
-              <th className="px-4 py-3 font-medium text-gray-700 dark:text-gray-300">
+              <th className="px-4 py-3 hidden md:block font-medium text-gray-700 dark:text-gray-300">
                 Category
               </th>
 
               <th className="px-4 py-3 font-medium text-gray-700 dark:text-gray-300">
                 Price
               </th>
-              <th className="px-4 py-3 font-medium text-gray-700 dark:text-gray-300">
+              <th className="px-4 py-3 hidden md:block font-medium text-gray-700 dark:text-gray-300">
                 Discount
               </th>
               <th className="px-4 py-3 font-medium text-gray-700 dark:text-gray-300">
@@ -62,38 +62,38 @@ export default function Dashboard() {
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {products.map((product: any, ind) => (
               <tr key={ind}>
-                <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">
+                <td className="md:px-4 md:py-3 px-2 text-[14px] md:text-[18px] font-medium text-gray-900 dark:text-gray-100">
                   {product.name}
                 </td>
-                <td>{product.category.name}</td>
-                <td className="px-4 py-3 text-gray-700 dark:text-gray-400">
+                <td className="hidden md:block">{product.category.name}</td>
+                <td className="md:px-4 md:py-3 text-gray-700 dark:text-gray-400">
                   {product.price}
                 </td>
-                <td className="px-4 py-3 text-gray-700 dark:text-gray-400">
+                <td className="md:px-4 md:py-3 hidden md:block text-gray-700 dark:text-gray-400">
                   {product.discount}
                 </td>
-                <td className="px-4 py-3 flex items-center space-x-2 text-gray-500 dark:text-gray-400">
-                  <Button
-                    onClick={() => {
-                      setCurrentProduct(product);
-                      editModalOnOpen();
-                    }}
-                    size="icon"
-                    variant="ghost"
-                  >
-                    <Icon icon="bxs:edit" className="w-6 h-6" />
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      setCurrentProduct(product);
-                      onOpen();
-                    }}
-                    size="icon"
-                    variant="ghost"
-                  >
-                    <TrashIcon className="h-5 w-5" />
-                    <span className="sr-only">Delete</span>
-                  </Button>
+                <td className="md:px-4 md:py-3 px-4">
+                  <div className="flex flex-col md:flex-row gap-2">
+                    <button
+                      className="button"
+                      onClick={() => {
+                        setCurrentProduct(product);
+                        editModalOnOpen();
+                      }}
+                    >
+                      <Icon icon="bxs:edit" className="w-6 h-6" />
+                    </button>
+                    <button
+                      className="button"
+                      onClick={() => {
+                        setCurrentProduct(product);
+                        onOpen();
+                      }}
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                      <span className="sr-only">Delete</span>
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
