@@ -73,7 +73,13 @@ export const insertProduct = (product) => {
           // Handle the case where the category does not exist
           data.push({
             Category: product.Category,
-            Products: [product.Products[0]],
+            Products: [
+              {
+                ...product.Products[0],
+                updated: Date.now(),
+                created: Date.now(),
+              },
+            ],
           });
         }
 
@@ -105,7 +111,10 @@ export const updateProduct = (product) => {
             (item) => item.id === product.Products[0].id
           );
           if (productIndex !== -1) {
-            data[categoryIndex].Products[productIndex] = product.Products[0];
+            data[categoryIndex].Products[productIndex] = {
+              ...product.Products[0],
+              updated: Date.now(),
+            };
           } else {
             data[categoryIndex].Products.push(product.Products[0]);
             deleteProduct({
