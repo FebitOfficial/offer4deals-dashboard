@@ -68,7 +68,11 @@ export const insertProduct = (product) => {
           (item) => item.Category === product.Category
         );
         if (categoryIndex !== -1) {
-          data[categoryIndex].Products.push(product.Products[0]);
+          data[categoryIndex].Products.push({
+            ...product.Products[0],
+            updated: Date.now(),
+            created: Date.now(),
+          });
         } else {
           // Handle the case where the category does not exist
           data.push({
